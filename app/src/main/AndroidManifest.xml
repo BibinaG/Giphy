@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <application
+        android:name="com.example.assignment.App"
         android:allowBackup="true"
         android:tint="@color/red"
         android:dataExtractionRules="@xml/data_extraction_rules"
