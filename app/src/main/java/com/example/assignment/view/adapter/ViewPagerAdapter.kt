@@ -1,13 +1,8 @@
 package com.example.assignment.view.adapter
 
-import com.example.assignment.view.fragments.FirstFragment
-import com.example.assignment.view.fragments.SecondFragment
-
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentPagerAdapter
 import androidx.viewpager2.adapter.FragmentStateAdapter
 
 class ViewPagerStateAdapter(

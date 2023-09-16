@@ -5,7 +5,7 @@ import com.example.assignment.di.NetConfig.CONNECT_TIMEOUT
 import com.example.assignment.di.NetConfig.READ_TIMEOUT
 import com.example.assignment.di.NetConfig.WRITE_TIMEOUT
 import com.chuckerteam.chucker.api.ChuckerInterceptor
-import com.example.assignment.network.GipfyApi
+import com.example.assignment.network.GiphyApi
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import okhttp3.Cache
@@ -25,7 +25,7 @@ val netModule = module(override = true) {
     single { provideLoggingInterceptor() }
     single { provideHeaderInterceptor() }
     single { providerChuckerInterceptor(androidContext()) }
-    factory { provideRestApiService<GipfyApi>(get(), get(), get(), get()) }
+    factory { provideRestApiService<GiphyApi>(get(), get(), get(), get()) }
 }
 
 object NetConfig {
@@ -54,8 +54,8 @@ private fun provideHeaderInterceptor(): Interceptor =
 //        val version = BuildConfig.VERSION_NAME
 //        val versionCode = BuildConfig.VERSION_CODE
         val request = chain.request().newBuilder()
-            .header("Content-Type", "application/json")
-            .header("Accept", "application/json")
+            .header("api_key", "PYL0VtLFl3E0PdmS6BEwBQNHoXpGA6GV")
+            // .header("Accept", "application/json")
             .build()
 
         chain.proceed(request)
@@ -69,7 +69,7 @@ inline fun <reified T> provideRestApiService(
     loggingInterceptor: HttpLoggingInterceptor,
     chuckerInterceptor: ChuckerInterceptor
 ): T {
-    val serverUrl = "https://api.giphy.com/v1/gifs/trending"
+    val serverUrl = "https://api.giphy.com/v1/gifs/"
     val retrofit = Retrofit.Builder()
         .baseUrl(serverUrl)
         .client(
@@ -104,9 +104,7 @@ fun createRestOkHttpClient(
         .addInterceptor { chain ->
             val original = chain.request()
             val requestBuilder = original.newBuilder()
-//            prefs.authToken?.let { token ->
-//                requestBuilder.header("Authorization", "Bearer $token")
-//            }
+            // requestBuilder.header("api_key", "PYL0VtLFl3E0PdmS6BEwBQNHoXpGA6GV")
             chain.proceed(requestBuilder.build())
         }
 

@@ -4,29 +4,28 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.fragments.FirstFragment">
+    tools:context=".view.fragments.TrendingFragment">
 
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/etSearch"
-        android:layout_width="0dp"
+        android:id="@+id/Search"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/_6sdp"
         app:endIconDrawable="@drawable/ic_search"
-        app:endIconMode="clear_text"
+        app:endIconMode="custom"
         app:endIconTint="@color/black"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/searchText"
+            android:id="@+id/etSearch"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:hint="@string/search_gify"
-            android:maxLines="1"
-            android:padding="@dimen/_6sdp"
-            android:textSize="12sp" />
+            android:imeOptions="actionDone" />
+
     </com.google.android.material.textfield.TextInputLayout>
 
     <androidx.recyclerview.widget.RecyclerView
@@ -37,10 +36,19 @@
         android:paddingLeft="@dimen/_6sdp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/etSearch"
-        app:layout_constraintStart_toStartOf="@+id/etSearch"
-        app:layout_constraintTop_toBottomOf="@+id/etSearch"
-        tools:itemCount="5"
+        app:layout_constraintEnd_toEndOf="@+id/Search"
+        app:layout_constraintStart_toStartOf="@+id/Search"
+        app:layout_constraintTop_toBottomOf="@+id/Search"
+        tools:itemCount="2"
         tools:listitem="@layout/gify_items" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/rvSearchResult" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
