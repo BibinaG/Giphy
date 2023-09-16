@@ -10,21 +10,21 @@ import com.example.assignment.androidcommon.utils.UiState
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.assignment.androidcommon.base.BaseFragment
-import com.example.assignment.databinding.FragmentFirstBinding
+import com.example.assignment.databinding.FragmentTrendingBinding
 import com.example.assignment.view.adapter.FirstFragmentAdapter
 import com.example.assignment.viewmodel.TrendingViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
-class TrendingFragment : BaseFragment<FragmentFirstBinding>() {
-    private var _binding: FragmentFirstBinding? = null
+class TrendingFragment : BaseFragment<FragmentTrendingBinding>() {
+    private var _binding: FragmentTrendingBinding? = null
     private val trendVM by viewModel<TrendingViewModel>()
     private lateinit var firstFragmentAdapter: FirstFragmentAdapter
 
     override fun getViewBinding(
         inflater: LayoutInflater,
         container: ViewGroup?
-    ) = FragmentFirstBinding.inflate(layoutInflater, container, false)
+    ) = FragmentTrendingBinding.inflate(layoutInflater, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

@@ -5,13 +5,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.assignment.androidcommon.base.BaseFragment
-import com.example.assignment.databinding.FragmentSecondBinding
+import com.example.assignment.databinding.FragmentFavouritesBinding
 
-class FavouritesFragment : BaseFragment<FragmentSecondBinding>() {
+
+class FavouritesFragment : BaseFragment<FragmentFavouritesBinding>() {
     override fun getViewBinding(
         inflater: LayoutInflater,
         container: ViewGroup?
-    ) = FragmentSecondBinding.inflate(layoutInflater, container, false)
+    ) = FragmentFavouritesBinding.inflate(layoutInflater, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
