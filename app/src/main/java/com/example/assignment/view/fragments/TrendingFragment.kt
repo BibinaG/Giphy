@@ -3,6 +3,7 @@ package com.example.assignment.view.fragments
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,7 +12,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.assignment.androidcommon.base.BaseFragment
 import com.example.assignment.databinding.FragmentTrendingBinding
+import com.example.assignment.network.dao.GiphyDao
+import com.example.assignment.network.database.GiphyDatabase
 import com.example.assignment.view.adapter.FirstFragmentAdapter
+import com.example.assignment.viewmodel.DataTypes
 import com.example.assignment.viewmodel.TrendingViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -20,6 +24,7 @@ class TrendingFragment : BaseFragment<FragmentTrendingBinding>() {
     private var _binding: FragmentTrendingBinding? = null
     private val trendVM by viewModel<TrendingViewModel>()
     private lateinit var firstFragmentAdapter: FirstFragmentAdapter
+
 
     override fun getViewBinding(
         inflater: LayoutInflater,
@@ -31,6 +36,7 @@ class TrendingFragment : BaseFragment<FragmentTrendingBinding>() {
         binding.root
         initViews()
         initObserver()
+        searchCall()
     }
 
     private fun initViews() {
@@ -58,12 +64,17 @@ class TrendingFragment : BaseFragment<FragmentTrendingBinding>() {
 
         trendVM.getAllTrendingGiphy(0)
 
+
+    }
+
+    private fun searchCall() {
         binding.etSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                val newText = s.toString()
+                var newText = s.toString()
+                trendVM.setDataType(DataTypes.Search)
                 trendVM.getSearchItem(newText, 0)
             }
 
@@ -84,13 +95,14 @@ class TrendingFragment : BaseFragment<FragmentTrendingBinding>() {
                 is UiState.Success -> {
                     binding.progressBar.visibility = View.GONE
                     it.data?.data?.let { data ->
-//                        if (trendVM.dataType == DataTypes.Search) {
-//                            firstFragmentAdapter.removeAll()
-//                            trendVM.setDataType(DataTypes.Trending)
-//                            firstFragmentAdapter.addItems(data)
-//
-//                        }
+                        if (trendVM.dataType == DataTypes.Search) {
+                            firstFragmentAdapter.removeAll()
+                            trendVM.setDataType(DataTypes.Trending)
+                            firstFragmentAdapter.addItems(data)
+
+                        }
                         firstFragmentAdapter.addItems(data)
+                        GiphyDatabase.getDatabase(requireContext())
                     }
                 }
 

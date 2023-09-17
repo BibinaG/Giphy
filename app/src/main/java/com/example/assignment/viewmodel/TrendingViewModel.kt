@@ -4,8 +4,11 @@ import com.example.assignment.androidcommon.utils.UiState
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import com.example.assignment.model.TrendingResponse
 import com.example.assignment.model.TrendyGiphyResponse
+import com.example.assignment.network.database.TrendyRepository
 import com.example.assignment.repository.TrendingGiphyRepo
 import kotlinx.coroutines.launch
 
@@ -16,7 +19,9 @@ enum class DataTypes {
 }
 
 class TrendingViewModel(
-    private val repo: TrendingGiphyRepo
+    private val repo: TrendingGiphyRepo,
+    private val trendyRepository: TrendyRepository
+
 ) : ViewModel() {
     private var _dataType = DataTypes.None
     val dataType = _dataType;
@@ -24,6 +29,17 @@ class TrendingViewModel(
     fun setDataType(type: DataTypes) {
         _dataType = type
     }
+    val localShipments: LiveData<List<TrendingResponse>> = trendyRepository.favGiphy.asLiveData()
+
+    fun insert(shipment: TrendingResponse) = viewModelScope.launch {
+        trendyRepository.insert(shipment = shipment)
+    }
+
+    fun deleteAllLocal() = viewModelScope.launch {
+        trendyRepository.deleteAll()
+    }
+
+
 
     private val _trendingGiphy = MutableLiveData<UiState<TrendyGiphyResponse>>()
     val trendingGiphy: LiveData<UiState<TrendyGiphyResponse>> = _trendingGiphy
@@ -37,7 +53,7 @@ class TrendingViewModel(
     fun getSearchItem(searchValue: String?, offset: Int) {
         viewModelScope.launch {
             _trendingGiphy.value = UiState.Loading()
-            _trendingGiphy.value = repo.searchItem(searchValue,offset)
+            _trendingGiphy.value = repo.searchItem(searchValue, offset)
         }
     }
 

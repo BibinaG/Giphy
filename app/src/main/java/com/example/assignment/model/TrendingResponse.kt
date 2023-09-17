@@ -1,8 +1,9 @@
 package com.example.assignment.model
 
 
+import androidx.room.Entity
 import com.google.gson.annotations.SerializedName
-
+@Entity(tableName = "giphy_table")
 data class TrendingResponse(
     @SerializedName("bitly_gif_url")
     val bitlyGifUrl: String?,
