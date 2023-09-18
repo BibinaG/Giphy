@@ -29,10 +29,10 @@ class TrendingViewModel(
     fun setDataType(type: DataTypes) {
         _dataType = type
     }
-    val localShipments: LiveData<List<TrendingResponse>> = trendyRepository.favGiphy.asLiveData()
+    val localRoomData: LiveData<List<TrendingResponse>> = trendyRepository.favGiphy.asLiveData()
 
-    fun insert(shipment: TrendingResponse) = viewModelScope.launch {
-        trendyRepository.insert(shipment = shipment)
+    fun insert(trendingResponse: TrendingResponse) = viewModelScope.launch {
+        trendyRepository.insert(shipment = trendingResponse)
     }
 
     fun deleteAllLocal() = viewModelScope.launch {

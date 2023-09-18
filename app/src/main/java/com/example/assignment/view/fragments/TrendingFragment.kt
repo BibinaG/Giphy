@@ -12,6 +12,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.assignment.androidcommon.base.BaseFragment
 import com.example.assignment.databinding.FragmentTrendingBinding
+import com.example.assignment.model.TrendingResponse
+import com.example.assignment.model.TrendyGiphyResponse
 import com.example.assignment.network.dao.GiphyDao
 import com.example.assignment.network.database.GiphyDatabase
 import com.example.assignment.view.adapter.FirstFragmentAdapter
@@ -102,8 +104,8 @@ class TrendingFragment : BaseFragment<FragmentTrendingBinding>() {
 
                         }
                         firstFragmentAdapter.addItems(data)
-                        GiphyDatabase.getDatabase(requireContext())
                     }
+
                 }
 
                 is UiState.Error -> {
@@ -113,6 +115,18 @@ class TrendingFragment : BaseFragment<FragmentTrendingBinding>() {
                 else -> Unit
             }
         }
+    }
+
+    fun observerDatabase() {
+        trendVM.localRoomData.observe(viewLifecycleOwner) {
+            it ?: return@observe
+            val items = mutableListOf<TrendingResponse>()
+            it.forEach { localItem ->
+
+            }
+
+        }
+
     }
 
     override fun onDestroyView() {
