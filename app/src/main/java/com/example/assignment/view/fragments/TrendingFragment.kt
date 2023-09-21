@@ -3,21 +3,16 @@ package com.example.assignment.view.fragments
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import com.example.assignment.androidcommon.utils.UiState
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.assignment.androidcommon.base.BaseFragment
 import com.example.assignment.databinding.FragmentTrendingBinding
-import com.example.assignment.model.TrendingResponse
-import com.example.assignment.model.TrendyGiphyResponse
-import com.example.assignment.network.dao.GiphyDao
-import com.example.assignment.network.database.GiphyDatabase
 import com.example.assignment.view.adapter.FirstFragmentAdapter
-import com.example.assignment.viewmodel.DataTypes
 import com.example.assignment.viewmodel.TrendingViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -25,7 +20,9 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class TrendingFragment : BaseFragment<FragmentTrendingBinding>() {
     private var _binding: FragmentTrendingBinding? = null
     private val trendVM by viewModel<TrendingViewModel>()
-    private lateinit var firstFragmentAdapter: FirstFragmentAdapter
+    private lateinit var trendingGifAdapter: FirstFragmentAdapter
+    private lateinit var searchResultAdapter: FirstFragmentAdapter
+    private var currentOffset = 0;
 
 
     override fun getViewBinding(
@@ -42,9 +39,24 @@ class TrendingFragment : BaseFragment<FragmentTrendingBinding>() {
     }
 
     private fun initViews() {
-        firstFragmentAdapter = FirstFragmentAdapter()
-        binding.rvSearchResult.adapter = firstFragmentAdapter
-        binding.rvSearchResult.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+        trendingGifAdapter = FirstFragmentAdapter(
+            onFavClick = { item ->
+                trendVM.insert(item)
+                Toast.makeText(requireContext(), "Liked Giphy", Toast.LENGTH_SHORT).show()
+            }
+        )
+        searchResultAdapter = FirstFragmentAdapter(
+            onFavClick = { item ->
+                trendVM.insert(item)
+                Toast.makeText(requireContext(), "Liked Giphy", Toast.LENGTH_SHORT).show()
+
+            }
+        )
+        binding.rvSearchResult.visibility = View.INVISIBLE
+        binding.rvTrendingGifs.adapter = trendingGifAdapter
+        binding.rvSearchResult.adapter = searchResultAdapter
+
+        binding.rvTrendingGifs.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 val layoutManager = recyclerView.layoutManager as LinearLayoutManager
@@ -64,6 +76,30 @@ class TrendingFragment : BaseFragment<FragmentTrendingBinding>() {
             }
         })
 
+        binding.rvSearchResult.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+                val visibleItemCount = layoutManager.childCount
+                val totalItemCount = layoutManager.itemCount
+                val firstVisibleItem = layoutManager.findFirstVisibleItemPosition()
+
+                if (visibleItemCount + firstVisibleItem >= totalItemCount) {
+                    // Fetch new data
+                    val totalItemsServer =
+                        trendVM.searchResultGifs.value?.data?.pagination?.totalCount ?: 0
+
+                    if (totalItemCount < totalItemsServer) {
+                        currentOffset = totalItemCount
+                        trendVM.getSearchItem(
+                            searchValue = binding.etSearch.text.toString(),
+                            offset = totalItemCount
+                        )
+                    }
+                }
+            }
+        })
+
         trendVM.getAllTrendingGiphy(0)
 
 
@@ -75,12 +111,18 @@ class TrendingFragment : BaseFragment<FragmentTrendingBinding>() {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                var newText = s.toString()
-                trendVM.setDataType(DataTypes.Search)
-                trendVM.getSearchItem(newText, 0)
+
             }
 
             override fun afterTextChanged(s: Editable?) {
+                val newText = s.toString()
+                if (newText.isEmpty()) {
+                    binding.rvSearchResult.visibility = View.INVISIBLE
+                    binding.rvTrendingGifs.visibility = View.VISIBLE
+                    return
+                }
+                trendVM.getSearchItem(newText, 0)
+                currentOffset = 0
             }
         })
     }
@@ -97,15 +139,8 @@ class TrendingFragment : BaseFragment<FragmentTrendingBinding>() {
                 is UiState.Success -> {
                     binding.progressBar.visibility = View.GONE
                     it.data?.data?.let { data ->
-                        if (trendVM.dataType == DataTypes.Search) {
-                            firstFragmentAdapter.removeAll()
-                            trendVM.setDataType(DataTypes.Trending)
-                            firstFragmentAdapter.addItems(data)
-
-                        }
-                        firstFragmentAdapter.addItems(data)
+                        trendingGifAdapter.addItems(data)
                     }
-
                 }
 
                 is UiState.Error -> {
@@ -115,19 +150,46 @@ class TrendingFragment : BaseFragment<FragmentTrendingBinding>() {
                 else -> Unit
             }
         }
-    }
 
-    fun observerDatabase() {
-        trendVM.localRoomData.observe(viewLifecycleOwner) {
-            it ?: return@observe
-            val items = mutableListOf<TrendingResponse>()
-            it.forEach { localItem ->
+        trendVM.searchResultGifs.observe(viewLifecycleOwner) {
+            when (it) {
+                is UiState.Loading -> {
+                    binding.progressBar.visibility = View.VISIBLE
+                }
 
+                is UiState.Success -> {
+                    binding.progressBar.visibility = View.GONE
+                    it.data?.data?.let { data ->
+                        if (currentOffset == 0) {
+                            searchResultAdapter.removeAll()
+                        }
+                        if (data.isEmpty()) {
+                            Toast.makeText(
+                                requireContext(),
+                                "No Search result found",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            searchResultAdapter.removeAll()
+                            return@observe
+                        }
+                        binding.rvSearchResult.visibility = View.VISIBLE
+                        binding.rvTrendingGifs.visibility = View.INVISIBLE
+                        searchResultAdapter.addItems(data)
+                    }
+                }
+
+                is UiState.Error -> {
+                    binding.progressBar.visibility = View.VISIBLE
+                }
+
+                else -> {
+                    binding.rvSearchResult.visibility = View.INVISIBLE
+                    binding.rvTrendingGifs.visibility = View.VISIBLE
+                }
             }
-
         }
-
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()

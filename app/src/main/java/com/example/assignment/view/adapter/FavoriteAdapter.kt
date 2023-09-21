@@ -7,12 +7,12 @@ import com.example.assignment.R
 import com.example.assignment.androidcommon.base.ImmutableRecyclerAdapter
 import com.example.assignment.androidcommon.base.VBViewHolder
 import com.example.assignment.databinding.GifyItemsBinding
-import com.example.assignment.model.TrendingResponse
+import com.example.assignment.model.table.TrendingTable
 import kotlin.properties.Delegates
 
-class FirstFragmentAdapter(val onFavClick: (TrendingResponse) -> Unit) :
-    ImmutableRecyclerAdapter<TrendingResponse, GifyItemsBinding>() {
-    override var items: List<TrendingResponse> by Delegates.observable(emptyList()) { _, old, new ->
+class FavoriteAdapter(val onFavClick: (TrendingTable) -> Unit) :
+    ImmutableRecyclerAdapter<TrendingTable, GifyItemsBinding>() {
+    override var items: List<TrendingTable> by Delegates.observable(emptyList()) { _, old, new ->
         autoNotify(old, new) { o, n -> o == n }
     }
 
@@ -24,7 +24,7 @@ class FirstFragmentAdapter(val onFavClick: (TrendingResponse) -> Unit) :
         val item = items[position]
         with(holder.binding) {
             Glide.with(holder.itemView.context)
-                .load(item.image?.downsized?.url)
+                .load(item.url)
                 .error(R.drawable.flat_tick)
                 .into(ivGif)
             tvName.text = item.title

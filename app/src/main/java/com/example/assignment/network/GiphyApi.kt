@@ -8,7 +8,7 @@ import retrofit2.http.Query
 interface GiphyApi {
     companion object {
         private const val TrendingGiphy = "trending"
-        private const val search = "searches"
+        private const val search = "search"
     }
 
     @GET(TrendingGiphy)

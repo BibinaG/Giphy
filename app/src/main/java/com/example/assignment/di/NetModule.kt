@@ -12,7 +12,6 @@ import okhttp3.Cache
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import org.koin.android.BuildConfig
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 import retrofit2.Retrofit
@@ -39,11 +38,7 @@ private fun provideGson(): Gson = GsonBuilder().setPrettyPrinting().create()
 private fun provideLoggingInterceptor() =
     HttpLoggingInterceptor { message ->
     }.apply {
-        level = if (BuildConfig.DEBUG) {
-            HttpLoggingInterceptor.Level.BODY
-        } else {
-            HttpLoggingInterceptor.Level.NONE
-        }
+        HttpLoggingInterceptor.Level.BODY
     }
 
 private fun providerChuckerInterceptor(context: Context) =

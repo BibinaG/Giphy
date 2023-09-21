@@ -34,7 +34,6 @@ suspend fun <T> Response<T>.handleResponse(doActionOnSuccess: suspend (body: T) 
         UiState.Error(message(), code())
     } */ else {
         val errorBody = errorBody()?.string()
-        loggerE(errorBody?.trim())
         return try {
             val errorModel = Gson().fromJson(errorBody, BaseErrorEntity::class.java)
             UiState.Error(
@@ -47,7 +46,6 @@ suspend fun <T> Response<T>.handleResponse(doActionOnSuccess: suspend (body: T) 
                 ?: throw Exception("Thrown to try another approach!")
             )
         } catch (e: Exception) {
-            loggerE("On First Exception")
             e.logException()
             //Parse: {"password":["This field may not be blank."]}
             val type = object : TypeToken<Map<String, List<String>>>() {}.type
@@ -64,7 +62,6 @@ suspend fun <T> Response<T>.handleResponse(doActionOnSuccess: suspend (body: T) 
                 UiState.Error(message())
             }
         } catch (e: Exception) {
-            loggerE("On Second Exception")
             e.logException()
             val stringArrayType = object : TypeToken<List<String>>() {}.type
             val arrayMessages: List<String> = Gson().fromJson(errorBody, stringArrayType)

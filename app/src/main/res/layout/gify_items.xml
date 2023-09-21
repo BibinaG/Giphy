@@ -43,7 +43,8 @@
             android:padding="@dimen/_4sdp"
             android:src="@drawable/ic_heart"
             app:layout_constraintStart_toStartOf="@+id/ivGif"
-            app:layout_constraintTop_toBottomOf="@id/ivGif" />
+            app:layout_constraintTop_toBottomOf="@id/ivGif"
+            app:tint="@color/red" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

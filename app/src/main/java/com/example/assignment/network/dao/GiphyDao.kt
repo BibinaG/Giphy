@@ -1,22 +1,23 @@
 package com.example.assignment.network.dao
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.example.assignment.model.TrendingResponse
-import kotlinx.coroutines.flow.Flow
+import com.example.assignment.model.table.TrendingTable
 
 @Dao
 interface GiphyDao {
     @Query("SELECT * FROM giphy_table")
-    fun getAllFavourites(): Flow<List<TrendingResponse>>
-
+    fun getAllFavourites(): List<TrendingTable>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(shipmentTable: TrendingResponse)
+    fun insert(trendingResponse: TrendingTable)
 
     @Query("DELETE FROM giphy_table")
-    suspend fun deleteAll()
+    fun deleteAll()
 
+    @Delete
+    fun delete(response: TrendingTable)
 }

@@ -40,7 +40,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     enum class GiphyFragments(val label: String, val fragment: Fragment) {
-        First("FirstFragment", TrendingFragment()),
-        Second("SecondFragment", FavouritesFragment()),
+        First("TrendingFragment", TrendingFragment()),
+        Second("FavFragment", FavouritesFragment()),
     }
 }

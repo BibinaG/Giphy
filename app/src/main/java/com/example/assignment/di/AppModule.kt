@@ -16,6 +16,7 @@ val appModule = module {
     single { provideContentResolver(get()) }
     single { Dispatchers.Default }
     single { CoroutineScope(Dispatchers.Main + Job()) }
+    single { CoroutineScope(Dispatchers.IO) }
 }
 
 fun provideResources(context: Context): Resources = context.resources
